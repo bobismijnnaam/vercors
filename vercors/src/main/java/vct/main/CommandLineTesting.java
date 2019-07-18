@@ -51,52 +51,52 @@ public class CommandLineTesting {
     for(String dir:selftest){
       if (dir.equals("")){
         Progress("Testing backends.");
-        res=runtest(tt,Verdict.Inconclusive,"z3","-smt2","//examples/backends/test-sat.smt");
+        res=runtest(tt,Verdict.Inconclusive,"z3","-smt2","//backends/test-sat.smt");
         res.mustSay("p true");
         res.mustSay("q true");
         check(res,"z3","sat");
 
-        res=runtest(tt,Verdict.Inconclusive,"z3","-smt2","//examples/backends/test-unsat.smt");  
+        res=runtest(tt,Verdict.Inconclusive,"z3","-smt2","//backends/test-unsat.smt");
         res.mustSay("unsat");
         check(res,"z3","unsat");
 
-        res=runtest(tt,Verdict.Inconclusive,"boogie","//examples/backends/test-pass.bpl");  
+        res=runtest(tt,Verdict.Inconclusive,"boogie","//backends/test-pass.bpl");
         res.mustSay("Boogie program verifier finished with 1 verified, 0 errors");
         check(res,"boogie","passing");
 
-        res = runtest(tt,Verdict.Inconclusive,"boogie","//examples/backends/test-fail.bpl");
+        res = runtest(tt,Verdict.Inconclusive,"boogie","//backends/test-fail.bpl");
         res.mustSay("Boogie program verifier finished with 0 verified, 1 error");
         check(res,"boogie","failing");
         
-        res=runtest(tt,Verdict.Inconclusive,"chalice","//examples/backends/test-pass.chalice");  
+        res=runtest(tt,Verdict.Inconclusive,"chalice","//backends/test-pass.chalice");
         res.mustSay("Boogie program verifier finished with 3 verified, 0 errors");
         check(res,"chalice","passing");
         
-        res=runtest(tt,Verdict.Inconclusive,"chalice","//examples/backends/test-fail.chalice");  
+        res=runtest(tt,Verdict.Inconclusive,"chalice","//backends/test-fail.chalice");
         res.mustSay("Boogie program verifier finished with 2 verified, 1 error");
         check(res,"chalice","failing");
         
-        res=runtest(tt,Verdict.Inconclusive,"dafny","/compile:0","//examples/backends/test-pass.dfy");  
+        res=runtest(tt,Verdict.Inconclusive,"dafny","/compile:0","//backends/test-pass.dfy");
         res.mustSay("Dafny program verifier finished with 2 verified, 0 errors");
         check(res,"dafny","passing");
         
-        res=runtest(tt,Verdict.Error,"dafny","/compile:0","//examples/backends/test-fail.dfy");  
+        res=runtest(tt,Verdict.Error,"dafny","/compile:0","//backends/test-fail.dfy");
         res.mustSay("Dafny program verifier finished with 1 verified, 1 error");
         check(res,"dafny","failing");
         
-        res=runtest(tt,Verdict.Inconclusive,"carbon","//examples/backends/test-pass.sil");  
+        res=runtest(tt,Verdict.Inconclusive,"carbon","//backends/test-pass.sil");
         res.mustSay("No errors found.");
         check(res,"carbon","passing");
         
-        res=runtest(tt,Verdict.Error,"carbon","//examples/backends/test-fail.sil");  
+        res=runtest(tt,Verdict.Error,"carbon","//backends/test-fail.sil");
         res.mustSay("Assignment might fail. Divisor 0 might be zero.");
         check(res,"carbon","failing");
 
-        res=runtest(tt,Verdict.Inconclusive,"silicon","//examples/backends/test-pass.sil");  
+        res=runtest(tt,Verdict.Inconclusive,"silicon","//backends/test-pass.sil");
         res.mustSay("No errors found.");
         check(res,"silicon","passing");
 
-        res=runtest(tt,Verdict.Error,"silicon","//examples/backends/test-fail.sil");  
+        res=runtest(tt,Verdict.Error,"silicon","//backends/test-fail.sil");
         res.mustSay("Assignment might fail. Divisor 0 might be zero.");
         check(res,"silicon","failing");
 
@@ -113,7 +113,7 @@ public class CommandLineTesting {
     String testcmd_prefix="<test>";
     PrintStream cmds=null;
     if (command_file.used()){
-      testcmd_prefix="java -cp "+Configuration.getHome().toString()+"/vct-tool.jar vct.main.TestRun ";
+      testcmd_prefix="java -cp " + System.getProperty("java.class.path") + " vct.main.TestRun ";
       try {
         cmds=new PrintStream(new FileOutputStream(command_file.get()));
       } catch (FileNotFoundException e) {

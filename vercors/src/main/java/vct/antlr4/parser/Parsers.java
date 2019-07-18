@@ -7,6 +7,7 @@ import java.io.File;
 import vct.col.ast.stmt.decl.ProgramUnit;
 import vct.col.util.Parser;
 import vct.silver.ColSilverParser;
+
 import static hre.lang.System.Fail;
 import static hre.lang.System.Progress;
 
@@ -39,7 +40,7 @@ public class Parsers {
     }
     String lang=name.substring(dot+1);
     Progress("Parsing %s file %s",lang,name);
-    ProgramUnit unit=Parsers.getParser(lang).parse(new File(name));
+    ProgramUnit unit=Parsers.getParser(lang).parseFile(new File(name));
     Progress("Read %s succesfully",name);
     return unit;
   }

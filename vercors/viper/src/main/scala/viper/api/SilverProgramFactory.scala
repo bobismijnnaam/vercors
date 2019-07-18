@@ -1,16 +1,22 @@
 package viper.api
 
+import java.io.File
+
 import viper.silver.ast._
+
 import scala.collection.JavaConverters._
 import scala.collection.JavaConverters._
-import viper.silver.verifier.{Failure, Success, AbortedExceptionally, VerificationError}
+import viper.silver.verifier.{AbortedExceptionally, Failure, Success, VerificationError}
 import java.util.List
 import java.util.Properties
 import java.util.SortedMap
+
 import scala.math.BigInt.int2bigInt
 import viper.silver.ast.SeqAppend
 import java.nio.file.Path
+
 import viper.silver.parser.PLocalVarDecl
+
 import scala.collection.mutable.WrappedArray
 
 class SilverProgramFactory[O,Err] extends ProgramFactory[O,Err,Type,Exp,Stmt,
@@ -77,8 +83,8 @@ class SilverProgramFactory[O,Err] extends ProgramFactory[O,Err,Type,Exp,Stmt,
     p.domains.add(Domain(name,funcs.asScala,axioms.asScala,args)(NoPosition,new OriginInfo(o)));
   }
   
-  override def parse_program(x$1: String): viper.api.Prog = {
-    Parser.parse_sil(x$1)
+  override def parse_program(data: String): viper.api.Prog = {
+    Parser.parse_sil_string(data)
   }
   
    
@@ -389,24 +395,39 @@ class SilverProgramFactory[O,Err] extends ProgramFactory[O,Err,Type,Exp,Stmt,
 object Parser extends viper.silver.frontend.SilFrontend {
   private var silicon: viper.silver.verifier.NoVerifier = new viper.silver.verifier.NoVerifier
 
-  def parse_sil(name:String) = {
-    configureVerifier(Nil);
-    init(silicon)
-    reset(java.nio.file.Paths.get(name))
+  private def finish_parse(): Prog = {
     parse()         /* Parse into intermediate (mutable) AST */
     typecheck()     /* Resolve and typecheck */
     translate()     /* Convert intermediate AST to final (mainly immutable) AST */
     _program match {
-      case Some(Program(domains,fields,functions,predicates,methods)) => 
+      case Some(Program(domains,fields,functions,predicates,methods)) =>
         val prog=new Prog();
-          prog.domains.addAll(domains.asJava)
-          prog.fields.addAll(fields.asJava)
-          prog.functions.addAll(functions.asJava)
-          prog.predicates.addAll(predicates.asJava)
-          prog.methods.addAll(methods.asJava)
+        prog.domains.addAll(domains.asJava)
+        prog.fields.addAll(fields.asJava)
+        prog.functions.addAll(functions.asJava)
+        prog.predicates.addAll(predicates.asJava)
+        prog.methods.addAll(methods.asJava)
         prog;
       case _ => throw new Error("empty file");
     }
+  }
+
+  def parse_sil_file(name: String): Prog = {
+    configureVerifier(Nil)
+    init(silicon)
+    reset(java.nio.file.Paths.get(name))
+    finish_parse()
+  }
+
+  def parse_sil_string(data: String): Prog = {
+    configureVerifier(Nil)
+    init(silicon)
+    val emptyFile = File.createTempFile("vercors-", ".sil")
+    reset(emptyFile.toPath)
+    emptyFile.delete()
+    _inputFile = Some(new File("dummy").toPath)
+    _input = Some(data)
+    finish_parse()
   }
 
   def configureVerifier(args: Seq[String]): viper.silver.frontend.SilFrontendConfig = {

@@ -2,6 +2,7 @@ package vct.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,7 +33,7 @@ public class Configuration {
   /**
    * 
    */
-  public static final StringListSetting modulepath;
+//  public static final StringListSetting modulepath;
   
   /**
    * Switch behavior of witness encoding.
@@ -122,7 +123,7 @@ public class Configuration {
     clops.add(enable_post_check.getDisable("disable barrier post check during kernel verification"),"disable-post-check");
     clops.add(witness_constructors.getEnable("use constructors for witnesses"),"witness-constructors");
     clops.add(witness_constructors.getDisable("inline constructors for witnesses"),"witness-inline");
-    clops.add(Configuration.modulepath.getAppendOption("configure path for finding back end modules"),"module-path");
+//    clops.add(Configuration.modulepath.getAppendOption("configure path for finding back end modules"),"module-path");
     clops.add(cpp_command.getAssign("set the C Pre Processor command"),"cpp");
     clops.add(cpp_include_path.getAppendOption("add to the CPP include path"),'I',"include");
     clops.add(cpp_defines.getAppendOption("add to the CPP defined variables"),'D');
@@ -135,71 +136,67 @@ public class Configuration {
   public static Option profiling_option=profiling.getOptionalAssign("Enable profiling");
   
   public static StringListSetting skip=new StringListSetting();
-  
-  /**
-   * Contains the absolute path to the home of the tool set installation.
-   */
-  private static Path home;
- 
-  private static Path tool_home;
-  
-  static {
-    String tmp=System.getenv("VCT_HOME");
-    if (tmp==null){
-      ClassLoader loader=Configuration.class.getClassLoader();
-      URL url=loader.getResource("vct/util/Configuration.class");
-      File f=null;
-      Debug("origin is %s", f);
-      switch(url.getProtocol()){
-      case "file":
-        f=new File(url.getFile());
-        for(int i=0;i<5;i++) f=f.getParentFile();
-      case "jar":
-        tmp=url.getFile();
-        if (tmp.startsWith("file:")) tmp=tmp.substring(5); else break;
-        int idx=tmp.indexOf("!");
-        if (idx<0) break;
-        tmp=tmp.substring(0,idx);
-        f=new File(tmp);
-        f=f.getParentFile();
-      }
-      if (f==null){
-        throw new Error("Could not deduce VCT_HOME");
-      }
-      Debug("home is %s", f);
-      tmp=f.toString();
-      // Remove the file: prefix that shows up while executing under ant.
-      if (tmp.startsWith("file:")) tmp=tmp.substring(5);
+
+  public static URL getResource(String resource) {
+    URL url = Configuration.class.getClassLoader().getResource(resource);
+
+    if(url == null) {
+      Abort("Missing resource: %s", resource);
     }
-    home=Paths.get(tmp).toAbsolutePath().normalize();
-    if (!home.toFile().isDirectory()){
-      throw new Error("VCT_HOME value "+tmp+" is not a directory");
-    }
-    Path module_deps=home.resolve("deps").resolve("modules");
-    if (!module_deps.toFile().isDirectory()){
-      module_deps=home.getParent().getParent().resolve(Paths.get("modules"));
-      if (!module_deps.toFile().isDirectory()){
-        hre.lang.System.Warning("dependency modules not found");
-      }
-    }
-    tool_home=module_deps.getParent();
-    modulepath=new StringListSetting(module_deps.toString());
+
+    return url;
   }
 
-  /**
-   * Get the home of the VerCors Tool installation.
-   * @return VerCors Tool home.
-   */
-  public static Path getHome(){
-    return home;
+  public static InputStream openResource(String resource) {
+    URL url = getResource(resource);
+
+    try {
+      return url.openStream();
+    } catch(IOException e) {
+      DebugException(e);
+      Abort("Could not open resource: %s", resource);
+      return null; //unreachable
+    }
   }
   
   /**
    * Get the home of the Third party tools installation.
    * @return Tools home.
    */
-  public static Path getToolHome(){
-    return tool_home;
+  public static Path getToolHome() {
+    String toolHomeEnv = System.getenv("TOOL_HOME");
+    if(toolHomeEnv == null) {
+      return new File("deps").toPath();
+    } else {
+      return Paths.get(toolHomeEnv);
+    }
+  }
+
+  public static Path getModulesHome() {
+    String modulesHomeEnv = System.getenv("MODULES_HOME");
+    if(modulesHomeEnv == null) {
+      return new File("modules").toPath();
+    } else {
+      return Paths.get(modulesHomeEnv);
+    }
+  }
+
+  public static Path getIncludesHome() {
+    String modulesHomeEnv = System.getenv("INCLUDES_HOME");
+    if(modulesHomeEnv == null) {
+      return new File("include").toPath();
+    } else {
+      return Paths.get(modulesHomeEnv);
+    }
+  }
+
+  public static Path getExamplesHome() {
+    String examplesHomeEnv = System.getenv("EXAMPLES_HOME");
+    if(examplesHomeEnv == null) {
+      return new File("examples").toPath();
+    } else {
+      return Paths.get(examplesHomeEnv);
+    }
   }
 
   /**
@@ -211,10 +208,10 @@ public class Configuration {
       if (modules.length==0){
         return new ModuleShell();
       }
-      shell = new ModuleShell(getHome().resolve(Paths.get("modules")));
-      for (String p:modulepath){
-        shell.send("module use %s",p);
-      }
+      shell = new ModuleShell(getModulesHome());
+//      for (String p:modulepath){
+//        shell.send("module use %s",p);
+//      }
       for (String m:modules){
         shell.send("module load %s",m);
       }

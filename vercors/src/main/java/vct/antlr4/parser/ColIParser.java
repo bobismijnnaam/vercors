@@ -25,9 +25,9 @@ import vct.col.syntax.CSyntax;
 /**
  * Parse specified code and convert the contents to COL. 
  */
-public class ColIParser implements vct.col.util.Parser {
-
-  protected ProgramUnit parse(String file_name,InputStream stream) throws IOException{
+public class ColIParser extends vct.col.util.Parser {
+  @Override
+  public ProgramUnit parse(String file_name,InputStream stream) throws IOException {
     TimeKeeper tk=new TimeKeeper();
     ErrorCounter ec=new ErrorCounter(file_name);
 
@@ -81,21 +81,6 @@ public class ColIParser implements vct.col.util.Parser {
     Debug("after stripping unused parts %s",pu);
     
     return pu;
-  }
-  
-  @Override
-  public ProgramUnit parse(File file) {
-    String file_name=file.toString();
-    try {
-      InputStream stream =new FileInputStream(file);
-      return parse(file_name,stream);
-    } catch (FileNotFoundException e) {
-      Fail("File %s has not been found",file_name);
-    } catch (Exception e) {
-      DebugException(e);
-      Abort("Exception %s while parsing %s",e.getClass(),file_name);
-    }
-    return null;
   }
 
 }

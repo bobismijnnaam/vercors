@@ -10,30 +10,18 @@ import vct.col.rewrite.RewriteSystem;
 import vct.util.Configuration;
 
 public class RewriteSystems {
-
-  static final File default_file;
-  
-  static {
-    File tmp=new File(new File(Configuration.getHome().toFile(),"config"),"rules.java");
-    default_file=tmp.getAbsoluteFile();
-  }
-  
-  static Map<File,ProgramUnit> systems=new ConcurrentHashMap<File,ProgramUnit>();
+  private static Map<String, ProgramUnit> systems = new ConcurrentHashMap<>();
   
   public static RewriteSystem getRewriteSystem(String name){
-    File f=new File(name+".jspec");
-    if (!f.exists()){
-      f=new File(new File(Configuration.getHome().toFile(),"config"),name+".jspec");
-    }
-    ProgramUnit unit=systems.get(f);
-    if (unit==null) synchronized(systems){
-      unit=systems.get(f);
-      if (unit==null){
-        unit=Parsers.getParser("jspec").parse(f);
-        systems.put(f, unit);
+    if(!systems.containsKey(name)) {
+      synchronized(systems) {
+        if(!systems.containsKey(name)) {
+          String fileName = "config/" + name + ".jspec";
+          systems.put(name, Parsers.getParser("jspec").parseResource(fileName));
+        }
       }
     }
-    return new RewriteSystem(unit,name);
-  }
 
+    return new RewriteSystem(systems.get(name), name);
+  }
 }

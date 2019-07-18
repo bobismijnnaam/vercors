@@ -32,7 +32,7 @@ public class ToolTest {
     idx++;
     String test_name=stackTraceElements[idx].getMethodName();
     VCTResult res=new VCTResult();
-    Path f=Configuration.getHome();
+    Path f=Configuration.getExamplesHome();
     String OS=System.getProperty("os.name");
     for(int i=1;i<args.length;i++){
       if (args[i].startsWith("//")){
@@ -44,17 +44,15 @@ public class ToolTest {
     res.verdict=TestReport.Verdict.Inconclusive;
     switch(args[0]){
     case "vct":
-      if (args[1].equals("--syntax")){
+      args[0] = "java -cp " + System.getProperty("java.class.path") + " vct.main.Main";
+
+      if(args[1].equals("--syntax")){
         args[1]="--passes=standardize,check,java";
       }
-      if (OS.startsWith("Windows")){
-        args[0]=f+"\\windows\\bin\\"+args[0]+".cmd"; //DRB --added
-      } else {
-        args[0]=f+"/unix/bin/"+args[0]; //DRB --added
-      }
+
       sh=Configuration.getShell();
       res.verdict=null;
-      args[0] += " --progress"; // To capture verification time
+      args[0] += " --progress --debug vct.main.Main"; // To capture verification time
       if (CommandLineTesting.savedir.used()){
         Path dir=Paths.get(CommandLineTesting.savedir.get()).toAbsolutePath();
         String ext="";
@@ -178,7 +176,9 @@ public class ToolTest {
         }
       }
     }
-    if (res.verdict==null) fail(res,"missing verdict");
+    if (res.verdict==null) {
+      fail(res,"missing verdict");
+    }
     return res;
   }
 

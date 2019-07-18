@@ -4,6 +4,7 @@ package vct.main;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
+import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
@@ -83,6 +84,7 @@ public class Main
 
   public static void main(String[] args) throws Throwable
   {
+    System.out.printf("%s%n", Main.class.getClassLoader().getResource("config/prelude.sil").toString());
     int exit=0;
     long globalStart = System.currentTimeMillis();
     try {

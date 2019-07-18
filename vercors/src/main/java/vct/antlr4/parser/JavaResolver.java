@@ -108,7 +108,7 @@ public class JavaResolver extends AbstractRewriter {
     file=new File(file,name[name.length-1]+".java");
     if (file.exists()){
       Parser parser=Parsers.getParser("java");
-      ProgramUnit pu=parser.parse(file);
+      ProgramUnit pu=parser.parseFile(file);
       ASTClass cls=pu.find(name);
       if (cls!=null){
         // correct file, so remove bodies.
