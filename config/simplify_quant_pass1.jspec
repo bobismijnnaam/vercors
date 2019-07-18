@@ -31,6 +31,8 @@ class simplify_quant_pass1 {
 
   // SJ: div_3 is not true for e1 == 0
   // axiom div_3 { e1 / e1 == 1 }
+  // alternatively, we can check for zero in some cases. Not needed so far, so this is removed
+  // axiom div_3 { (e1/e2) * e2 == ((e2 == 0) ? 0 : e1) }
   axiom div_4 { e1 / 1 == e1 }
 
   axiom B1 {
@@ -170,7 +172,14 @@ class simplify_quant_pass1 {
    axiom constant { (\forall* int i;( i \memberof [ e1 .. e2 )) ; Perm( (e3!i) , (e4!i) ) )
                  ==
                    e1 < e2 ==> Perm(e3,e4*(e2-e1)) }
-   
+
+   axiom constant2 { (\forall* int i;( i \memberof [ e1 .. e2 )) ;
+                   (\forall* int j; (j \memberof [ (e3!i) .. (e4!i) ) ); Perm( (e5!i) , (e6!i) ) ))
+                 ==
+                    e1 < e2 ==> (\forall* int j; (j \memberof [ e3 .. e4 ) ); Perm( (e5) , (e6)*(e2-e1) ) )
+                  }
+
+
    axiom right_plus { (\forall* int i;( i \memberof [ e1 .. e2 )) ; Perm( ar [ i+(e3!i) ] , (e4!i) ) )
                  ==
                  (\forall* int i;  ( i \memberof [ e1+e3 .. e2+e3 )) ; Perm( ar [ i ] , e4 ) ) }

@@ -1,0 +1,18 @@
+// -*- tab-width:4 ; indent-tabs-mode:nil -*-
+//:: cases ParallelPermDivision
+//:: tools silicon
+//:: verdict Pass
+
+class MyClass {
+  given frac p;
+  requires p != none;
+  invariant xs != null;
+  requires (\forall* int i; 0 <= i && i < xs.length; Perm(xs[i], p));
+  void foo(int[] xs) {
+    int N = 3;
+    par (int tid = 0..N)
+      requires N > 0;
+      context (\forall* int i; 0 <= i && i < xs.length; Perm(xs[i], p/N));
+    { }
+  }
+}
