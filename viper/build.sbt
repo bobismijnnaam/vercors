@@ -5,9 +5,9 @@ import sbt.internal._
 
 /* To update viper, replace the hash with the commit hash that you want to point to. It's a good idea to ask people to
  re-import the project into their IDE, as the location of the viper projects below will change. */
-val silver_url = uri("hg:https://bitbucket.org/viperproject/silver#1a2059df2fc348a6a777e73e00ad10a4c129da0f")
-val carbon_url = uri("hg:https://bitbucket.org/viperproject/carbon#1565055c99f3b07d71f02f99de092d3077491d66")
-val silicon_url = uri("hg:https://bitbucket.org/viperproject/silicon#44fda0b4d7d8fb5c8cb9cd04216bb849003ae8c7")
+val silver_url = uri("hg:https://bitbucket.org/viperproject/silver#453af2118e8ea6b9c8fc45f346cf3decd0483af6")
+val carbon_url = uri("hg:https://bitbucket.org/viperproject/carbon#e13889d8be158325e1afefc207cb5e5deb76fee2")
+val silicon_url = uri("hg:https://bitbucket.org/viperproject/silicon#f773761b7527d4721918677e820290b444555970")
 
 scalaVersion := "2.12.7"
 
