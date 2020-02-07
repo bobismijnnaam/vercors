@@ -216,8 +216,9 @@ class SilverProgramFactory[O,Err] extends ProgramFactory[O,Err,Type,Exp,Stmt,
            null,
            null
        )
-       case Fresh(ps) => api.stat.fresh(o,map_expr(api,ps))
-       case Constraining(ps,body) => api.stat.constraining(o,map_expr(api,ps),map_stat(api,body))
+         // TODO: Is just deleting these ok?
+//       case Fresh(ps) => api.stat.fresh(o,map_expr(api,ps))
+//       case Constraining(ps,body) => api.stat.constraining(o,map_expr(api,ps),map_stat(api,body))
        case Exhale(e) => api.stat.exhale(o,map_expr(api,e))
        case Goto(e) => api.stat.goto_(o,e)
        case If(c, s1, s2) => api.stat.if_then_else(o,
@@ -401,13 +402,15 @@ object Parser extends viper.silver.frontend.SilFrontend {
     semanticAnalysis()
     translation()
     _program match {
-      case Some(Program(domains,fields,functions,predicates,methods)) => 
+      case Some(Program(domains, fields, functions, predicates, methods, extensions)) =>
         val prog=new Prog();
-          prog.domains.addAll(domains.asJava)
-          prog.fields.addAll(fields.asJava)
-          prog.functions.addAll(functions.asJava)
-          prog.predicates.addAll(predicates.asJava)
-          prog.methods.addAll(methods.asJava)
+        prog.domains.addAll(domains.asJava)
+        prog.fields.addAll(fields.asJava)
+        prog.functions.addAll(functions.asJava)
+        prog.predicates.addAll(predicates.asJava)
+        prog.methods.addAll(methods.asJava)
+//        println("WARNING: Ignoring \"extesions\" member of Program!") // TODO: Is ignoring extensions member ok here?
+        hre.lang.System.Debug("WARNING: Ignoring \"extesions\" member of Program!")
         prog;
       case _ => throw new Error("empty file");
     }

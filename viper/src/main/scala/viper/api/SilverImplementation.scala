@@ -26,7 +26,8 @@ class SilverImplementation[O,Err](o:OriginFactory[O])
               prog.fields.asScala.toList,
               prog.functions.asScala.toList,
               prog.predicates.asScala.toList,
-              prog.methods.asScala.toList)()
+              prog.methods.asScala.toList,
+              Nil)() // TODO: What are extensions? Is Nil okay here?
     pw.write(program.toString())
   }
   
@@ -59,7 +60,8 @@ class SilverImplementation[O,Err](o:OriginFactory[O])
               prog.fields.asScala.toList,
               prog.functions.asScala.toList,
               prog.predicates.asScala.toList,
-              prog.methods.asScala.toList)()
+              prog.methods.asScala.toList,
+              Nil)() // ??? Nil ???
               
     //println("=============\n" + program + "\n=============\n")
     

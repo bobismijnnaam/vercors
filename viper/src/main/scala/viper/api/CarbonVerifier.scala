@@ -18,18 +18,21 @@ class CarbonVerifier[O,Err](o:OriginFactory[O]) extends SilverImplementation[O,E
     } else {
       tool_home.resolve("boogie").resolve("2012-10-22").resolve("unix").resolve("bin").resolve("boogie").toString()
     }
-    val carbon = new viper.carbon.CarbonVerifier(Seq("startedBy" -> "example", "fullCmd" -> "dummy"))
-    print(Seq(
-        "--z3Exe",z3_exe,
-        "--boogieExe",boogie_exe,
-        "-"));
-    carbon.parseCommandLine(Seq(
-        "--z3Exe",z3_exe,
-        "--boogieExe",boogie_exe,
-        "-"))
-    //carbon.config.initialize{case _ =>}
-    carbon.start()
-    carbon
+//    println("Carbon not implemented anymore!");
+    sys.exit(123);
+//    val carbon = new viper.carbon.CarbonVerifier(Seq("startedBy" -> "example", "fullCmd" -> "dummy"))
+//    val carbon = new viper.silver.CarbonVerifier(Seq("startedBy" -> "example", "fullCmd" -> "dummy"))
+//    print(Seq(
+//        "--z3Exe",z3_exe,
+//        "--boogieExe",boogie_exe,
+//        "-"));
+//    carbon.parseCommandLine(Seq(
+//        "--z3Exe",z3_exe,
+//        "--boogieExe",boogie_exe,
+//        "-"))
+//    //carbon.config.initialize{case _ =>}
+//    carbon.start()
+//    carbon
   }
 }
 
