@@ -427,18 +427,27 @@ public class JavaEncoder extends AbstractRewriter {
       switch(m.kind){
       case Constructor:
       case Plain:
+        ArrayList<Type> new_throws_types_arr = new ArrayList<>();
+        for (Type throws_type : m.getThrowsTypes()) {
+          Type new_throws_type = rewrite(throws_type);
+          if (new_throws_type != null) {
+            new_throws_types_arr.add(new_throws_type);
+          }
+        }
+        Type[] new_throws_types = new_throws_types_arr.toArray(new Type[new_throws_types_arr.size()]);
+
         if (direct){
           ASTNode body=rewrite(m.getBody());
-          Method res=create.method_kind(kind, returns, external_contract, name, args, varArgs, body);
+          Method res=create.method_kind(kind, returns, external_contract, name, args, varArgs, body, new_throws_types);
           res.copyMissingFlags(m);
           currentTargetClass.add(res);         
         } else {
-          currentTargetClass.add(create.method_kind(kind, returns, initial_contract, name, args, varArgs, null));
+          currentTargetClass.add(create.method_kind(kind, returns, initial_contract, name, args, varArgs, null, new_throws_types));
           args=copy_rw.rewrite(args);
           internal_mode=true;
           ASTNode body=rewrite(m.getBody());
           internal_mode=false;
-          currentTargetClass.add(create.method_kind(kind, returns, internal_contract, internal_name, args, varArgs, body));
+          currentTargetClass.add(create.method_kind(kind, returns, internal_contract, internal_name, args, varArgs, body, new_throws_types));
         }
         break;
       case Predicate:

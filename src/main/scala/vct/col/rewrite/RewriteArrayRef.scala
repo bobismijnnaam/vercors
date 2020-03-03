@@ -493,7 +493,7 @@ class RewriteArrayRef(source: ProgramUnit) extends AbstractRewriter(source) {
       new DeclarationStatement("to", create.primitive_type(PrimitiveSort.Integer))
     )
 
-    val declaration = create.method_kind(Method.Kind.Pure, t, contract.getContract, methodName, arguments, false, null)
+    val declaration = create.method_kind(Method.Kind.Pure, t, contract.getContract, methodName, arguments, false, null, Array[Type]())
     declaration.setStatic(true)
     declaration
   }
