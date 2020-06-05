@@ -7,6 +7,7 @@ class simplify_quant_pass1 {
   int i,j,k;
   rational p1,p2;
   int tid;
+  boolean[] bs1;
 
   axiom aunitr { e1+0 == e1 }
   axiom aunitl { 0+e1 == e1 }
@@ -403,8 +404,8 @@ class simplify_quant_pass1 {
   }
 
   axiom collapse_read_perm {
-    (\forall* int tid; (tid \memberof [e1 .. e2); Perm(e3!tid, read))
+    (\forall* int tid; (tid \memberof {e1 .. e2}); Perm((bs1!tid), read))
     ==
-    (e1 < e2) ==> Perm(e3, read)
+    (e1 < e2) ==> Perm(bs1, read)
   }
 }
