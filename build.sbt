@@ -10,6 +10,7 @@ ThisBuild / turbo := true // en wat is daar het praktisch nut van?
 enablePlugins(BuildInfoPlugin)
 enablePlugins(JavaAppPackaging)
 enablePlugins(DebianPlugin)
+enablePlugins(NoPublish)
 
 /* To update viper, replace the hash with the commit hash that you want to point to. It's a good idea to ask people to
  re-import the project into their IDE, as the location of the viper projects below will change. */
