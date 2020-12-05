@@ -15,6 +15,7 @@ jobs:
           key: ${{ runner.os }}-build-vercors-sbt-jdk11
       - name: Install fakeroot because SBT packager needs it
         run: sudo apt-get install fakeroot
+      - run: "echo $(which fakeroot)"
       - name: Build and package Vercors into .deb with SBT
         uses: lokkju/github-action-sbt@11-1.3.0-2.12.10
         with:
@@ -25,7 +26,7 @@ jobs:
           name: vercors-debian-package
           retention-days: 1
           path: |
-            target/**/*.deb
+            target/*.deb
   test:
     needs: build
     runs-on: ubuntu-latest
