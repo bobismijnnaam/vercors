@@ -23,6 +23,7 @@ jobs:
         #uses: lokkju/github-action-sbt@11-1.3.0-2.12.10
         #with:
           #commands: "debian:packageBin"
+      - run: sbt debian:packageBin
       - name: Archive VerCors .deb
         uses: actions/upload-artifact@v2
         with:
